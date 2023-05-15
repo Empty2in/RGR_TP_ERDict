@@ -11,7 +11,7 @@ namespace elina {
 
 	void openFile(std::fstream& in, std::string& fileName);
 	void readDictFromFail(std::fstream& in, DictEngRus& dictionary);
-	void readManyTransl(std::istream& in, DictEngRus& dictionary);
+	void readManyTransl(std::istream& in, dictSet& list);
 	void creatFileDict(DictEngRus& dictionary);
 	bool checkWord(std::string word);
 	std::string enterWord(std::istream& in);

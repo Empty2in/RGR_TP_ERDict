@@ -219,7 +219,7 @@ namespace elina {
         std::cin.ignore(1000, '\n');
         std::string newWord = enterWord(std::cin);
         dictSet list;
-        readManyTransl(std::cin, dictionary);
+        readManyTransl(std::cin, list);
         dictionary.insertManyTransl(newWord, list);
         std::cout << dictionary;
         return;
@@ -230,7 +230,7 @@ namespace elina {
         std::cin.ignore(1000, '\n');
         std::string newWord = enterWord(std::cin);
         dictSet list;
-        readManyTransl(std::cin, dictionary);
+        readManyTransl(std::cin, list);
         dictionary.changeAllTransl(newWord, list);
     }
 
