@@ -128,6 +128,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AddStruct.h" />
     <ClInclude Include="DictEngRus.h" />
     <ClInclude Include="AddOperators.h" />
     <ClInclude Include="InputException.h" />
@@ -136,6 +137,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AddOperators.cpp" />
+    <ClCompile Include="AddStruct.cpp" />
     <ClCompile Include="DictEngRus.cpp" />
     <ClCompile Include="InputException.cpp" />
     <ClCompile Include="main.cpp" />

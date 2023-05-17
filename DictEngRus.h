@@ -1,27 +1,22 @@
 #ifndef DICTENGRUS_H
 #define DICTENGRUS_H
 
+#include "AddStruct.h"
+
 #include <map>
 #include <set>
 #include <string>
 
 namespace elina {
-
-	using dictMap = std::map< std::string, std::set< std::string > >;
+	using dictMap = std::map< std::string, std::set< std::string >, dictComp >;
 	using dictPair = std::pair< std::string, std::set< std::string > >;
 	using dictSet = std::set< std::string >;
-	using dictMapIter = std::map< std::string, std::set< std::string > >::iterator;
 
 	class DictEngRus {
-	private:
-		dictMap dict_;
-
-		dictPair searchNode(std::string word);
-		dictSet* getTranslSet(std::string word);
 
 	public:
-		DictEngRus();
-		~DictEngRus();
+		DictEngRus() {};
+		~DictEngRus() {};
 		DictEngRus(const DictEngRus& other);
 		DictEngRus(DictEngRus&& other) noexcept;
 		DictEngRus& operator=(const DictEngRus& other);
@@ -51,8 +46,11 @@ namespace elina {
 		void merge(DictEngRus& other);
 
 		friend std::ostream& operator<<(std::ostream& out, const DictEngRus& tree);
-	};
 
+	private:
+		dictMap dict_;
+		dictSet* getTranslSet(std::string word);
+	};
 }
 
 #endif

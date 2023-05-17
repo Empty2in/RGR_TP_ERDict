@@ -4,15 +4,29 @@
 #include <ostream>
 #include <algorithm>
 #include <iomanip>
+#include <functional>
+#include <memory>
 
 namespace elina {
 
-	dictPair DictEngRus::searchNode(std::string word) {
-		auto ans = this->dict_.find(word);
-		if (ans != this->dict_.end()) {
-			return *ans;
+	DictEngRus::DictEngRus(const DictEngRus& other) {
+		dict_ = other.dict_;
+	}
+	DictEngRus::DictEngRus(DictEngRus&& other) noexcept {
+		dict_ = std::move(other.dict_);
+	}
+	DictEngRus& DictEngRus::operator=(const DictEngRus& other) {
+		if (this != &other) {
+			DictEngRus temp(other);
+			dict_ = std::move(temp.dict_);
 		}
-		return dictPair();
+		return *this;
+	}
+	DictEngRus& DictEngRus::operator=(DictEngRus&& other) noexcept {
+		if (this != &other) {
+			dict_ = std::move(other.dict_);
+		}
+		return *this;
 	}
 
 	dictSet* DictEngRus::getTranslSet(std::string word) {
@@ -22,90 +36,56 @@ namespace elina {
 		return &(this->dict_.at(word));
 	}
 
-	DictEngRus::DictEngRus() :
-		dict_()
-	{}
-
-	DictEngRus::~DictEngRus() {
-		this->clear();
-	}
-
-	DictEngRus::DictEngRus(const DictEngRus& other) {
-		this->dict_ = other.dict_;
-	}
-
-	DictEngRus::DictEngRus(DictEngRus&& other) noexcept {
-		this->dict_ = other.dict_;
-		other.~DictEngRus();
-	}
-
-	DictEngRus& DictEngRus::operator=(const DictEngRus& other) {
-		if (this != &other) {
-			DictEngRus temp(other);
-			swap(temp);
-		}
-		return *this;
-	}
-
-	DictEngRus& DictEngRus::operator=(DictEngRus&& other) noexcept {
-		if (this != &other) {
-			swap(other);
-		}
-		return *this;
-	}
-
 	size_t DictEngRus::getTranslCount(std::string word) const {
 		return getTranslate(word).size();
 	}
 
 	size_t DictEngRus::getCountOfWord() const {
-		return this->dict_.size();
+		return dict_.size();
 	}
 
 	dictSet DictEngRus::getTranslate(std::string word) const {
 		if (!searchWord(word)) {
 			return dictSet();
 		}
-		return this->dict_.at(word);
+		return dict_.at(word);
 	}
 
 	bool DictEngRus::searchWord(std::string word) const {
-		return (this->dict_.find(word) != this->dict_.end());
+		return (dict_.find(word) != dict_.end());
 	}
 
 	void DictEngRus::insertWord(std::string word) {
 		dictSet transl;
-		this->dict_.insert(std::make_pair(word, transl));
+		dict_.insert(std::make_pair(word, transl));
 	}
 
 	void DictEngRus::insertTranslate(std::string word, std::string transl) {
 		if (!searchWord(word)) {
 			insertWord(word);
 		}
-		this->dict_.at(word).insert(transl);
+		dict_.at(word).insert(transl);
 		return;
 	}
 
 	void DictEngRus::insertManyTransl(std::string word, dictSet transl) {
-		if (searchWord(word)) {
-			dictSet* oldTransl = getTranslSet(word);
-			if ((*oldTransl).empty()) {
-				*oldTransl = transl;
-			}
-			else {
-				(*oldTransl).merge(transl);
-			}
+		if (!searchWord(word)) {
+			dict_.insert(std::make_pair(word, transl));
+			return;
 		}
-		this->dict_.insert(std::make_pair(word, transl));
-		
-		return;
+		dictSet* oldTransl = getTranslSet(word);
+		if ((*oldTransl).empty()) {
+			*oldTransl = transl;
+		}
+		else {
+			(*oldTransl).merge(transl);
+		}
 	}
 
 	void DictEngRus::deleteWord(std::string word) {
 		if (searchWord(word)) {
-			this->dict_.erase(word);
-		}
-		return;
+			dict_.erase(word);
+		};
 	}
 
 
@@ -139,12 +119,12 @@ namespace elina {
 
 	void DictEngRus::clear() {
 		if (!isEmpty()) {
-			this->dict_.clear();
+			dict_.clear();
 		}
 	}
 
 	bool DictEngRus::isEmpty() const {
-		return this->dict_.empty();
+		return dict_.empty();
 	}
 
 	void DictEngRus::swap(DictEngRus& other) {

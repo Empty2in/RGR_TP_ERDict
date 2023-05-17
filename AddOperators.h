@@ -11,10 +11,14 @@ namespace elina {
 
 	void openFile(std::fstream& in, std::string& fileName);
 	void readDictFromFail(std::fstream& in, DictEngRus& dictionary);
-	void readManyTransl(std::istream& in, dictSet& list);
 	void creatFileDict(DictEngRus& dictionary);
+	void writeToFile(DictEngRus& dictionary);
 	bool checkWord(std::string word);
-	std::string enterWord(std::istream& in);
+
+	void enterWord(std::istream& in, std::string& word);
+	void helpInSize(std::istream& in, size_t& size);
+	void readManyTransl(std::istream& in, dictSet& list);
+	std::string helpInWord(std::istream& in, std::string phrase, bool ignore);
 
 	void mainMenu();
 	void actWithDict(DictEngRus& dictionary);
