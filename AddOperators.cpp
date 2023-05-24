@@ -2,96 +2,65 @@
 #include "StreamGuard.h"
 #include "InputException.h"
 #include "Phrases.h"
-
+#include "AddStruct.h"
 #include <iostream>
 #include <algorithm>
 #include <functional>
 #include <iomanip>
 #include <Windows.h>
 
+
 namespace elina {
 
-    size_t const menuCom = 1;
-
+    void checkCorretIn(std::istream& in) {
+        if (!in) {
+            throw WrongWord();
+        }
+    }
     void openFile(std::fstream& in, std::string& fileName) {
         std::cout << "Enter name of file: ";
         std::cin >> fileName;
         in.open(fileName);
-        if (!in.is_open()) {
+        auto dot = fileName.find_first_of('.');
+        auto fmt = fileName.substr(dot + 1);
+        if (!in.is_open() || dot == std::string::npos || fmt != "txt") {
             throw IncorrectFile();
         }
         if (in.peek() == EOF) {
             throw EmptyFile();
         }
     }
-
-    std::string helpInWord(std::istream& in, std::string phrase, bool ignore) {
+    std::string helpInWord(std::istream& in, std::string phrase) {
         std::cout << phrase;
-        /*dictWord word;
-        std::cin >> word;*/
-        std::string word;
-        enterWord(in, word);
-        return word;
+        dictWord word;
+        in >> word;
+        checkCorretIn(in);
+        return word.word_;
     }
-
-
-    bool checkWord(std::string word) {
-        return std::all_of(
-            word.begin(),
-            word.end(),
-            [](unsigned char c)
-            { return (std::isalpha(c) || c == ' ' || c == '-'); }
-        );
-    }
-
-
-    void enterWord(std::istream& in, std::string& word) {
-        if (in.peek() == '\n') {
-            in.ignore(1000, '\n');
-        }
-        std::getline(in, word);
-        if (!checkWord(word)) {
-            throw WrongWord();
-        }
-    }
-
-    void helpInSize(std::istream& in, size_t& size) {
-        in >> size;
-        if (in.peek() != '\n' || size == 0) {
-            throw WrongInt();
-        }
-    }
-
-
     void readManyTransl(std::istream& in, dictSet& list) {
         std::cout << insertRussianWord << whenStop;
-        std::string newTransl;
+        dictWord newTransl;
         while (std::cin) {
-            enterWord(std::cin, newTransl);
-            if (newTransl == "x" || newTransl == "÷") {
+            std::cin >> newTransl;
+            if (newTransl.word_ == "x" || newTransl.word_ == "÷") {
                 break;
             }
-            list.insert(newTransl);
+            list.insert(newTransl.word_);
         }
     }
 
-    void readDictFromFail(std::fstream& in, DictEngRus& dictionary) {
+    void readDictFromFile(std::fstream& in, DictEngRus& dictionary) {
+        dictName name;
+        in >> name;
+        checkCorretIn(in);
         while (!in.eof()) {
-            std::string newWord;
-            enterWord(in, newWord);
-
-            size_t countTransl = 0;
-            helpInSize(in, countTransl);
-            in.ignore(1000, '\n');
-
-            dictSet list;
-            for (size_t i = 0; i < countTransl; ++i) {
-                std::string newTransl;
-                enterWord(in, newTransl);
-                list.insert(newTransl);
-            }
-            dictionary.insertManyTransl(newWord, list);
-            in.ignore(1000, '\n');
+            firstFileWord newWord;
+            in >> newWord;
+            checkCorretIn(in);
+            fileSet buf;
+            in >> buf;
+            checkCorretIn(in);
+            dictionary.insertManyTransl(newWord.word_, buf.list_);
         }
         in.close();
     }
@@ -100,9 +69,8 @@ namespace elina {
         std::fstream in;
         std::string fileName;
         openFile(in, fileName);
-        readDictFromFail(in, dictionary);
+        readDictFromFile(in, dictionary);
     }
-
     void writeToFile(DictEngRus& dictionary) {
         std::ofstream out;
         std::string fileName;
@@ -114,33 +82,32 @@ namespace elina {
     }
 
     void mainMenu() {
-        size_t com = menuCom;
+        char com = ' ';
         while (com) {
             std::cout << mainMenuPhrase;
-            helpInSize(std::cin, com);
+            std::cin >> com;
             switch (com) {
-            case 1: checkEmptyDictionary(); break;
-            case 2: checkFileDict(); break;
-            case 3: checkTwoDicts(); break;
-            case 4: exit(0);
-            default: std::cout << defaultPhrase; break;
+            case '1': checkEmptyDictionary(); break;
+            case '2': checkFileDict(); break;
+            case '3': checkTwoDicts(); break;
+            case '4': return;
+            default: std::cout << defaultPhrase; std::cin.ignore(); break;
             }
         }
     }
-
     void actWithDict(DictEngRus& dictionary) {
-        size_t com = menuCom;
+        char com = ' ';
         while (com) {
             std::cout << actWithDictPhrase;
-            helpInSize(std::cin, com);
+            std::cin >> com;
             switch (com) {
-            case 1: checkInsert(dictionary); break;
-            case 2: checkDelete(dictionary); break;
-            case 3: checkSearch(dictionary); break;
-            case 4: checkOneWord(dictionary); break;
-            case 5: writeToFile(dictionary); break;
-            case 6: return;
-            default: std::cout << defaultPhrase; break;
+            case '1': checkInsert(dictionary); break;
+            case '2': checkDelete(dictionary); break;
+            case '3': checkSearch(dictionary); break;
+            case '4': checkOneWord(dictionary); break;
+            case '5': writeToFile(dictionary); break;
+            case '6': return;
+            default: std::cout << defaultPhrase; std::cin.ignore(); break;
             }
         }
     }
@@ -167,33 +134,30 @@ namespace elina {
         creatFileDict(dictionary2);
         std::cout << dictionary2;
 
-        size_t com = menuCom;
+        char com = ' ';
         while (com) {
             std::cout << checkTwoDictsPhrase;
-            helpInSize(std::cin, com);
+            std::cin >> com;
             switch (com) {
-            case 1: checkMerge(dictionary1, dictionary2); break;
-            case 2: checkEqual(dictionary1, dictionary2); break;
-            case 3: return;
-            default: std::cout << defaultPhrase; break;
+            case '1': checkMerge(dictionary1, dictionary2); break;
+            case '2': checkEqual(dictionary1, dictionary2); break;
+            case '3': return;
+            default: std::cout << defaultPhrase; std::cin.ignore(); break;
             }
         }
     }
-
     void checkMerge(DictEngRus& dictionary1, DictEngRus& dictionary2) {
         std::cout << "Dictionaries befor merge:\n"
             << dictionary1
             << '\n'
             << dictionary2;
         dictionary1.merge(dictionary2);
-        std::cout << "Dictionaries after merge:\n"
+        std::cout << "\nDictionaries after merge:\n"
             << dictionary1
             << '\n'
             << dictionary2;
         return;
     }
-
-
     void checkEqual(const DictEngRus& dictionary1, const DictEngRus& dictionary2) {
         std::cout << (
             dictionary1.isEqual(dictionary2) ?
@@ -204,102 +168,130 @@ namespace elina {
     }
 
     void checkInsert(DictEngRus& dictionary) {
-        size_t com = menuCom;
+        char com = ' ';
         while (com) {
             std::cout << checkInsertPhrase;
-            helpInSize(std::cin, com);
+            std::cin >> com;
             switch (com) {
-            case 1: insertOneWord(dictionary); break;
-            case 2: insertManyWords(dictionary); break;
-            case 3: insertOneTranslate(dictionary); break;
-            case 4: insertManyTranslate(dictionary); break;
-            case 5: changeTranslate(dictionary); break;
-            case 6: return;
-            default: std::cout << defaultPhrase; break;
+            case '1': insertOneWord(dictionary); break;
+            case '2': insertManyWords(dictionary); break;
+            case '3': insertOneTranslate(dictionary); break;
+            case '4': insertManyTranslate(dictionary); break;
+            case '5': changeTranslate(dictionary); break;
+            case '6': return;
+            default: std::cout << defaultPhrase; std::cin.ignore(); break;
             }
         }
     }
     void insertOneWord(DictEngRus& dictionary) {
-        dictionary.insertWord(helpInWord(std::cin, insertEngWord, true));
+        std::cout << (
+            dictionary.insertWord(helpInWord(std::cin, insertEngWord)) ? 
+            "Success insert.\n" : 
+            "This word is already in dictionary.\n"
+            );
         std::cout << dictionary;
         return;
     }
     void insertManyWords(DictEngRus& dictionary) {
         std::cout << insertEngWord << whenStop;
-        std::string newWord;
+        dictWord newWord;
         while (std::cin) {
-            enterWord(std::cin, newWord);
-            if (newWord == "x" || newWord == "÷") {
+            std::cin >> newWord;
+            if (newWord.word_ == "x" || newWord.word_ == "÷") {
                 break;
             }
-            dictionary.insertWord(newWord);
+            dictionary.insertWord(newWord.word_);
         }
         std::cout << dictionary;
         return;
     }
     void insertOneTranslate(DictEngRus& dictionary) {
-        std::string newWord = helpInWord(std::cin, engWordForTransl, true);
-        std::string newTransl = helpInWord(std::cin, insertRussianWord, false);
-        dictionary.insertTranslate(newWord, newTransl);
+        std::string newWord = helpInWord(std::cin, engWordForTransl);
+        std::string newTransl = helpInWord(std::cin, insertRussianWord);
+        std::cout << (
+            dictionary.insertTranslate(newWord, newTransl) ?
+            "Success insert.\n" :
+            "This word is already in dictionary.\n"
+            );
         std::cout << dictionary;
         return;
     }
     void insertManyTranslate(DictEngRus& dictionary) {
-        std::string newWord = helpInWord(std::cin, engWordForTransl, true);
+        std::string newWord = helpInWord(std::cin, engWordForTransl);
         dictSet list;
         readManyTransl(std::cin, list);
-        dictionary.insertManyTransl(newWord, list);
+        std::cout << (
+            dictionary.insertManyTransl(newWord, list) ?
+            "Success insert.\n" :
+            "This word is already in dictionary.\n"
+            );
         std::cout << dictionary;
         return;
     }
 
     void changeTranslate(DictEngRus& dictionary) {
-        std::string newWord = helpInWord(std::cin, engWordForTransl, true);
+        std::string newWord = helpInWord(std::cin, engWordForTransl);
         dictSet list;
         readManyTransl(std::cin, list);
-        dictionary.changeAllTransl(newWord, list);
+        std::cout << (
+            dictionary.changeAllTransl(newWord, list) ?
+            "Success change.\n" :
+            "This word isn't in dictionary.\n"
+            );
         std::cout << dictionary;
         return;
     }
 
     void checkDelete(DictEngRus& dictionary) {
-        size_t com = menuCom;
+        char com = ' ';
         while (com) {
             std::cout << checkDeletePhrase;
-            helpInSize(std::cin, com);
+            std::cin >> com;
             switch (com) {
-            case 1: checkOneWordDelete(dictionary); break;
-            case 2: checkOneTranslDelete(dictionary); break;
-            case 3: checkAllTranslDelete(dictionary); break;
-            case 4: return;
-            default: std::cout << defaultPhrase; break;
+            case '1': checkOneWordDelete(dictionary); break;
+            case '2': checkOneTranslDelete(dictionary); break;
+            case '3': checkAllTranslDelete(dictionary); break;
+            case '4': return;
+            default: std::cout << defaultPhrase; std::cin.ignore(); break;
             }
         }
     }
     void checkOneWordDelete(DictEngRus& dictionary) {
         std::cout << dictionary;
-        dictionary.deleteWord(helpInWord(std::cin, deleteEngWord, true));
+        std::cout << (
+            dictionary.deleteWord(helpInWord(std::cin, deleteEngWord)) ?
+            "Success delete.\n" :
+            "This word isn't in dictionary.\n"
+            );
         std::cout << dictionary;
         return;
     }
     void checkOneTranslDelete(DictEngRus& dictionary) {
         std::cout << dictionary;
-        std::string word = helpInWord(std::cin, deleteEngWord, true);
-        std::string delTransl = helpInWord(std::cin, deleteTransl, false);
-        dictionary.deleteTranslate(word, delTransl);
+        std::string word = helpInWord(std::cin, deleteEngWord);
+        std::string delTransl = helpInWord(std::cin, deleteTransl);
+        std::cout << (
+            dictionary.deleteTranslate(word, delTransl) ?
+            "Success delete.\n" :
+            "This word isn't in dictionary.\n"
+            );
         std::cout << dictionary;
         return;
     }
     void checkAllTranslDelete(DictEngRus& dictionary) {
         std::cout << dictionary;
-        dictionary.deleteAllTransl(helpInWord(std::cin, deleteWordAllTransl, true));
+        std::cout << (
+            dictionary.deleteAllTransl(helpInWord(std::cin, deleteWordAllTransl)) ?
+            "Success delete.\n" :
+            "This word isn't in dictionary.\n"
+            );
         std::cout << dictionary;
         return;
     }
 
     void checkSearch(DictEngRus& dictionary) {
         std::cout << dictionary;
-        std::cout << (dictionary.searchWord(helpInWord(std::cin, searchWord, true)) ?
+        std::cout << (dictionary.searchWord(helpInWord(std::cin, searchWord)) ?
             "\n\tThis word is in dictionary\n" :
             "\n\tThis word isn't in dictionary\n");
         return;
@@ -318,20 +310,34 @@ namespace elina {
         );
         return out;
     }
-
     std::ostream& operator <<(std::ostream& out, const dictPair& par) {
         std::ostream::sentry sentry(out);
         if (!sentry) {
             return out;
         }
         StreamGuard stream(out);
-        out << '\t' << std::setw(20) << std::left << par.first << par.second << '\n';
+        out << std::setw(20) << std::left << par.first << par.second << '\n';
+        return out;
+    }
+    std::ostream& operator <<(std::ostream& out, const DictEngRus& tree) {
+        std::ostream::sentry sentry(out);
+        if (!sentry) {
+            return out;
+        }
+        StreamGuard stream(out);
+        out << "DICTIONARY:\n";
+        std::for_each(
+            tree.cbegin(),
+            tree.cend(),
+            [&out](const dictPair& it)
+            { out << it; }
+        );
         return out;
     }
 
     void checkOneWord(DictEngRus& dictionary) {
         std::cout << dictionary;
-        std::string word = helpInWord(std::cin, infoWord, true);
+        std::string word = helpInWord(std::cin, infoWord);
         std::cout << "\nInfo about word '" << word << "' :";
         std::cout << "\n\tTranslations: " << dictionary.getTranslate(word);
         std::cout << "\n\tCount of translations: " << dictionary.getTranslCount(word);

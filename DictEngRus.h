@@ -1,55 +1,58 @@
 #ifndef DICTENGRUS_H
 #define DICTENGRUS_H
 
-#include "AddStruct.h"
+#include "MyCompare.h"
 
 #include <map>
 #include <set>
 #include <string>
 
 namespace elina {
-	using dictMap = std::map< std::string, std::set< std::string >, dictComp >;
-	using dictPair = std::pair< std::string, std::set< std::string > >;
-	using dictSet = std::set< std::string >;
+	using dictMap = std::map< std::string, std::set< std::string, dictComp >, dictComp >;
+	using dictPair = std::pair< std::string, std::set< std::string, dictComp > >;
+	using dictSet = std::set< std::string, dictComp >;
+	using dictMapIter = std::map< std::string, std::set< std::string, dictComp >, dictComp >::iterator;
+	using dictMapCIter= std::map< std::string, std::set< std::string, dictComp >, dictComp >::const_iterator;
 
 	class DictEngRus {
 
 	public:
-		DictEngRus() {};
-		~DictEngRus() {};
-		DictEngRus(const DictEngRus& other);
-		DictEngRus(DictEngRus&& other) noexcept;
-		DictEngRus& operator=(const DictEngRus& other);
-		DictEngRus& operator=(DictEngRus&& other) noexcept;
+		DictEngRus() = default;
+		~DictEngRus() = default;
+		DictEngRus(const DictEngRus& other) = default;
+		DictEngRus(DictEngRus&& other) noexcept = default;
+
+		dictMapIter begin();
+		dictMapIter end();
+		dictMapCIter cbegin() const;
+		dictMapCIter cend() const;
 
 		void clear();
 		bool isEmpty() const;
-		void swap(DictEngRus& other);
+		void swap(DictEngRus& other) noexcept;
 
 		size_t getCountOfWord() const;
-		size_t getTranslCount(std::string word) const;
-		dictSet getTranslate(std::string word) const;
+		size_t getTranslCount(const std::string& word) const;
+		dictSet getTranslate(const std::string& word) const;
 
-		bool searchWord(std::string word) const;
+		bool searchWord(const std::string& word) const;
 
-		void insertWord(std::string word);
-		void insertTranslate(std::string word, std::string transl);
-		void insertManyTransl(std::string word, dictSet transl);
+		bool insertWord(const std::string& word);
+		bool insertTranslate(const std::string& word, const std::string& transl);
+		bool insertManyTransl(const std::string& word, dictSet transl);
 		
-		void deleteWord(std::string word);
-		void deleteAllTransl(std::string word);
-		void deleteTranslate(std::string word, std::string delTrans);
+		bool deleteWord(const std::string& word);
+		bool deleteAllTransl(const std::string& word);
+		bool deleteTranslate(const std::string& word, const std::string& delTrans);
 
-		void changeAllTransl(std::string word, const dictSet& transl);
+		bool changeAllTransl(const std::string& word, const dictSet& transl);
 
 		bool isEqual(const DictEngRus& other) const;
-		void merge(DictEngRus& other);
-
-		friend std::ostream& operator<<(std::ostream& out, const DictEngRus& tree);
+		bool merge(DictEngRus& other);
 
 	private:
 		dictMap dict_;
-		dictSet* getTranslSet(std::string word);
+		dictSet* getTranslSet(const std::string& word);
 	};
 }
 

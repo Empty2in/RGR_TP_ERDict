@@ -132,6 +132,7 @@
     <ClInclude Include="DictEngRus.h" />
     <ClInclude Include="AddOperators.h" />
     <ClInclude Include="InputException.h" />
+    <ClInclude Include="MyCompare.h" />
     <ClInclude Include="Phrases.h" />
     <ClInclude Include="StreamGuard.h" />
   </ItemGroup>
@@ -141,13 +142,14 @@
     <ClCompile Include="DictEngRus.cpp" />
     <ClCompile Include="InputException.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MyCompare.cpp" />
     <ClCompile Include="StreamGuard.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="dict1.txt" />
+    <Text Include="dict2.txt" />
+    <Text Include="dict3.txt" />
     <Text Include="dictionary.txt" />
-    <Text Include="minidict.txt" />
-    <Text Include="minidict1.txt" />
-    <Text Include="minidict2.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

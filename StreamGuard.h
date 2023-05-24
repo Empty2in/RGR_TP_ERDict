@@ -3,18 +3,20 @@
 
 #include <ios>
 
-class StreamGuard {
-public:
+namespace elina {
+	class StreamGuard {
+	public:
 
-	StreamGuard(std::basic_ios<char>& s);
-	~StreamGuard();
+		StreamGuard(std::basic_ios<char>& s);
+		~StreamGuard();
 
-private:
-	char fill_;
-	std::basic_ios<char>& s_;
-	std::streamsize precision_;
-	std::basic_ios<char>::fmtflags flags_;
-};
+	private:
+		char fill_;
+		std::basic_ios<char>& s_;
+		std::streamsize precision_;
+		std::basic_ios<char>::fmtflags flags_;
+	};
+}
 
 #endif
 

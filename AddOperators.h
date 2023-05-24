@@ -1,24 +1,22 @@
 #ifndef ADDOPERATORS_H
 #define ADDOPERATORS_H
 
+
+#include "DictEngRus.h"
 #include <set>
 #include <map>
 #include <string>
 #include <fstream>
-#include "DictEngRus.h"
 
 namespace elina {
 
 	void openFile(std::fstream& in, std::string& fileName);
-	void readDictFromFail(std::fstream& in, DictEngRus& dictionary);
+	void readDictFromFile(std::fstream& in, DictEngRus& dictionary);
 	void creatFileDict(DictEngRus& dictionary);
 	void writeToFile(DictEngRus& dictionary);
-	bool checkWord(std::string word);
 
-	void enterWord(std::istream& in, std::string& word);
-	void helpInSize(std::istream& in, size_t& size);
+	std::string helpInWord(std::istream& in, std::string phrase);
 	void readManyTransl(std::istream& in, dictSet& list);
-	std::string helpInWord(std::istream& in, std::string phrase, bool ignore);
 
 	void mainMenu();
 	void actWithDict(DictEngRus& dictionary);
@@ -48,8 +46,7 @@ namespace elina {
 
 	std::ostream& operator <<(std::ostream& out, const dictSet& st);
 	std::ostream& operator <<(std::ostream& out, const dictPair& par);
-
+	std::ostream& operator <<(std::ostream& out, const DictEngRus& tree);
 }
-
 
 #endif

@@ -33,6 +33,9 @@
     <ClInclude Include="AddStruct.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="MyCompare.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DictEngRus.cpp">
@@ -53,18 +56,21 @@
     <ClCompile Include="AddStruct.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="MyCompare.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="minidict2.txt">
-      <Filter>Файлы ресурсов</Filter>
-    </Text>
-    <Text Include="minidict.txt">
-      <Filter>Файлы ресурсов</Filter>
-    </Text>
     <Text Include="dictionary.txt">
       <Filter>Файлы ресурсов</Filter>
     </Text>
-    <Text Include="minidict1.txt">
+    <Text Include="dict1.txt">
+      <Filter>Файлы ресурсов</Filter>
+    </Text>
+    <Text Include="dict2.txt">
+      <Filter>Файлы ресурсов</Filter>
+    </Text>
+    <Text Include="dict3.txt">
       <Filter>Файлы ресурсов</Filter>
     </Text>
   </ItemGroup>
