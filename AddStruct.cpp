@@ -27,64 +27,63 @@ namespace elina {
         }
         return in;
     }
-
     std::istream& operator>>(std::istream& in, dictWord& word) {
         std::istream::sentry sentry(in);
         if (!sentry) {
             return in;
         }
-        if (in.peek() == '\n') {
-            in.ignore(1000, '\n');
-        }
-        std::getline(in, word.word_, '\n');
-        if (!checkWord(word.word_)) {
+        in >> word.word_;
+        if (!checkWord(word.word_) || word.word_ == "") {
             in.setstate(std::ios::failbit);
         }
         return in;
     }
-
-    std::istream& operator>>(std::istream& in, firstFileWord& word) {
-        std::istream::sentry sentry(in);
-        if (!sentry) {
-            return in;
-        }
-        std::getline(in, word.word_, ' ');
-        if (!checkWord(word.word_)) {
-            in.setstate(std::ios::failbit);
-        }
-        return in;
-    }
-
     std::istream& operator>>(std::istream& in, fileWord& word) {
         std::istream::sentry sentry(in);
         if (!sentry) {
             return in;
         }
         std::getline(in, word.word_, ';');
-        if (!checkWord(word.word_)) {
+        if (!checkWord(word.word_) || word.word_ == "") {
             in.setstate(std::ios::failbit);
         }
         return in;
     }
-
-    std::istream& operator>>(std::istream& in, fileSet& list) {
+    std::istream& operator>>(std::istream& in, readSet& list) {
         std::istream::sentry sentry(in);
         if (!sentry) {
             return in;
         }
-        fileSet temp;
+        readSet temp;
         std::string str;
         std::getline(in, str, '\n');
         std::istringstream iss(str);
         while (!iss.eof()) {
             fileWord w;
             iss >> w;
-            if (in && w.word_.size() != 0) {
+            if (iss && w.word_.size() != 0) {
                 temp.list_.insert(w.word_);
             }
         }
         if (in) {
             list = temp;
+        }
+        return in;
+    }
+    std::istream& operator>>(std::istream& in, dictStr& str) {
+        std::istream::sentry sentry(in);
+        if (!sentry) {
+            return in;
+        }
+        dictWord word;
+        readSet list;
+        std::string input;
+        std::getline(in, input);
+        std::istringstream iss(input);
+        iss >> word >> list;
+        if (in) {
+            str.word_ = word.word_;
+            str.list_ = list.list_;
         }
         return in;
     }

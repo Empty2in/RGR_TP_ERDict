@@ -133,7 +133,6 @@
     <ClInclude Include="AddOperators.h" />
     <ClInclude Include="InputException.h" />
     <ClInclude Include="MyCompare.h" />
-    <ClInclude Include="Phrases.h" />
     <ClInclude Include="StreamGuard.h" />
   </ItemGroup>
   <ItemGroup>

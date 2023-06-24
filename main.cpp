@@ -1,11 +1,10 @@
 #include "AddOperators.h"
 #include <iostream>
-#include <Windows.h>
+#include <cstdlib>
 
 int main() {
     try {
-        SetConsoleCP(1251);
-        SetConsoleOutputCP(1251);
+        std::system("chcp 1251");
         setlocale(LC_ALL, "Russian");
         elina::mainMenu();
     }
