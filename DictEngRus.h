@@ -37,9 +37,8 @@ namespace elina {
 
 		bool searchWord(const std::string& word) const;
 
-		bool insertWord(const std::string& word);
-		bool insertTranslate(const std::string& word, const std::string& transl);
-		bool insertManyTransl(const std::string& word, dictSet transl);
+		bool insertWord(const std::string& word, const dictSet transl = dictSet{});
+		bool insertTransl(const std::string& word, dictSet transl);
 		
 		bool deleteWord(const std::string& word);
 		bool deleteAllTransl(const std::string& word);

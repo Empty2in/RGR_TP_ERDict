@@ -21,6 +21,6 @@ namespace elina {
             std::bind(toLowerStr, _1),
             std::bind(toLowerStr, _2)
         );
-        return static_cast<bool>(ans(word1, word2));
+        return static_cast< bool >(ans(word1, word2));
     }
 }

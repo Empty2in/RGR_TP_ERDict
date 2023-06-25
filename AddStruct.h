@@ -13,25 +13,24 @@ namespace elina {
 	struct dictName {
 		std::string word_;
 	};
-	struct firstFileWord {
-		std::string word_;
-	};
 	struct fileWord {
 		std::string word_;
 	};
-	struct fileSet {
+	struct readSet {
+		std::set< std::string, dictComp > list_;
+	};
+	struct dictStr {
+		std::string word_;
 		std::set< std::string, dictComp > list_;
 	};
 
 	bool checkWord(std::string word);
-
 	std::istream& operator>>(std::istream& in, dictName& word);
 	std::istream& operator>>(std::istream& in, dictWord& word);
-	std::istream& operator>>(std::istream& in, firstFileWord& word);
+	std::istream& operator>>(std::istream& in, dictStr& str);
 	std::istream& operator>>(std::istream& in, fileWord& word);
-	std::istream& operator>>(std::istream& in, fileSet& list);
+	std::istream& operator>>(std::istream& in, readSet& list);
 
 }
-
 
 #endif
