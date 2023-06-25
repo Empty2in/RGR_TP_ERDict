@@ -64,6 +64,10 @@ namespace elina {
             if (iss && w.word_.size() != 0) {
                 temp.list_.insert(w.word_);
             }
+            if (!iss) {
+                iss.clear();
+                iss.ignore();
+            }
         }
         if (in) {
             list = temp;
@@ -81,7 +85,7 @@ namespace elina {
         std::getline(in, input);
         std::istringstream iss(input);
         iss >> word >> list;
-        if (in) {
+        if (iss) {
             str.word_ = word.word_;
             str.list_ = list.list_;
         }
