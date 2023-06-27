@@ -1,9 +1,10 @@
 #ifndef ADDSTRUCRS_H
 #define ADDSTRUCTS_H
 
-#include "MyCompare.h"
-#include <iostream>
+#include <iosfwd>
 #include <set>
+
+#include "MyCompare.h"
 
 namespace elina {
 
@@ -11,12 +12,12 @@ namespace elina {
 		std::string word_;
 	};
 	struct dictName {
+		std::string dictName_;
+	};
+	struct trans {
 		std::string word_;
 	};
-	struct fileWord {
-		std::string word_;
-	};
-	struct readSet {
+	struct translist {
 		std::set< std::string, dictComp > list_;
 	};
 	struct dictStr {
@@ -24,12 +25,12 @@ namespace elina {
 		std::set< std::string, dictComp > list_;
 	};
 
-	bool checkWord(std::string word);
+	bool checkWord(const std::string& word);
 	std::istream& operator>>(std::istream& in, dictName& word);
 	std::istream& operator>>(std::istream& in, dictWord& word);
 	std::istream& operator>>(std::istream& in, dictStr& str);
-	std::istream& operator>>(std::istream& in, fileWord& word);
-	std::istream& operator>>(std::istream& in, readSet& list);
+	std::istream& operator>>(std::istream& in, trans& word);
+	std::istream& operator>>(std::istream& in, translist& list);
 
 }
 

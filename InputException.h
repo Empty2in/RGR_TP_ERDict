@@ -20,22 +20,13 @@ namespace elina {
 		const char* reason_;
 	};
 
-	class WrongWord : public std::exception {
+	class WrongDictName : public std::exception {
 	public:
-		WrongWord();
+		WrongDictName();
 		const char* what() const;
 	private:
 		const char* reason_;
 	};
-
-	class WrongInt : public std::exception {
-	public:
-		WrongInt();
-		const char* what() const;
-	private:
-		const char* reason_;
-	};
-
 }
 
 #endif
