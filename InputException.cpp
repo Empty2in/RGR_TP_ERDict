@@ -8,10 +8,7 @@ namespace elina {
 	EmptyFile::EmptyFile() : reason_("file is empty.") {}
 	const char* EmptyFile::what() const { return reason_; }
 	
-	WrongWord::WrongWord() : reason_("wrong word.") {}
-	const char* WrongWord::what() const { return reason_; }
-	
-	WrongInt::WrongInt() : reason_("wrong number.") {}
-	const char* WrongInt::what() const { return reason_; }
+	WrongDictName::WrongDictName() : reason_("wrong word.") {}
+	const char* WrongDictName::what() const { return reason_; }
 	
 }

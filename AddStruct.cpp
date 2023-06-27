@@ -1,29 +1,35 @@
-#include "AddStruct.h"
-#include "InputException.h"
 #include <iostream>
 #include <algorithm>
 #include <functional>
-#include <sstream>
 #include <string>
+
+#include "AddStruct.h"
+#include "InputException.h"
+#include "StreamGuard.h"
 
 namespace elina {
 
-    bool checkWord(std::string word) {
-        return std::all_of(
+    bool checkWord(const std::string& word) {
+        auto ans = std::all_of(
             word.begin(),
             word.end(),
             [](unsigned char c)
             { return (std::isalpha(c) || c == ' ' || c == '-'); }
         );
+        return ans;
     }
-    std::istream& operator>>(std::istream& in, dictName& word) {
+    std::istream& operator>>(std::istream& in, dictName& name) {
         std::istream::sentry sentry(in);
         if (!sentry) {
             return in;
         }
-        std::getline(in, word.word_);
-        if (word.word_ != "DICTIONARY:") {
+        dictName temp;
+        std::getline(in, temp.dictName_);
+        if (temp.dictName_ != "DICTIONARY:") {
             in.setstate(std::ios::failbit);
+        }
+        else {
+            name = temp;
         }
         return in;
     }
@@ -32,42 +38,52 @@ namespace elina {
         if (!sentry) {
             return in;
         }
-        in >> word.word_;
-        if (!checkWord(word.word_) || word.word_ == "") {
+        dictWord temp;
+        in >> temp.word_;
+        if (!checkWord(temp.word_) || temp.word_ == "") {
             in.setstate(std::ios::failbit);
+        }
+        else {
+            word = temp;
         }
         return in;
     }
-    std::istream& operator>>(std::istream& in, fileWord& word) {
+    std::istream& operator>>(std::istream& in, trans& word) {
         std::istream::sentry sentry(in);
         if (!sentry) {
             return in;
         }
-        std::getline(in, word.word_, ';');
-        if (!checkWord(word.word_) || word.word_ == "") {
+        trans temp;
+        char character = in.get();
+        while (character != '\n' && character != ';') {
+            temp.word_.push_back(character);
+            character = in.get();
+        }
+        if (!checkWord(temp.word_) || character == '\n') {
             in.setstate(std::ios::failbit);
+        }
+        else {
+            word = temp;
         }
         return in;
     }
-    std::istream& operator>>(std::istream& in, readSet& list) {
+    std::istream& operator>>(std::istream& in, translist& list) {
         std::istream::sentry sentry(in);
         if (!sentry) {
             return in;
         }
-        readSet temp;
-        std::string str;
-        std::getline(in, str, '\n');
-        std::istringstream iss(str);
-        while (!iss.eof()) {
-            fileWord w;
-            iss >> w;
-            if (iss && w.word_.size() != 0) {
-                temp.list_.insert(w.word_);
+        translist temp;
+        char newLine = '\0';
+        while (!in.eof() && (newLine != '\n')) {
+            trans trans;
+            in >> trans;
+            if (in) {
+                temp.list_.insert(trans.word_);
             }
-            if (!iss) {
-                iss.clear();
-                iss.ignore();
+            else {
+                break;
             }
+            newLine = in.peek();
         }
         if (in) {
             list = temp;
@@ -80,16 +96,15 @@ namespace elina {
             return in;
         }
         dictWord word;
-        readSet list;
-        std::string input;
-        std::getline(in, input);
-        std::istringstream iss(input);
-        iss >> word >> list;
-        if (iss) {
+        translist list;
+        in >> word;
+        if (!in.eof() && in.peek() != '\n') {
+            in >> list;
+        }
+        if (!in.fail()) {
             str.word_ = word.word_;
             str.list_ = list.list_;
         }
         return in;
     }
-}
     

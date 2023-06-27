@@ -1,10 +1,10 @@
 #ifndef MYCOMPARE_h
 #define MYCOMPARE_h
 
-#include <iostream>
+#include <string>
 
 namespace elina {
-	std::string toLowerStr(std::string& word);
+	void toLowerStr(std::string& word);
 	struct dictComp {
 		bool operator()(std::string word1, std::string word2) const;
 	};

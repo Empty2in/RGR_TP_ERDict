@@ -1,18 +1,18 @@
 #ifndef ADDOPERATORS_H
 #define ADDOPERATORS_H
 
-#include "DictEngRus.h"
 #include <set>
 #include <map>
 #include <string>
 #include <fstream>
 
+#include "DictEngRus.h"
+
 namespace elina {
 
-	void openFile(std::fstream& in);
-	std::string helpInWord(std::istream& in);
-	void writeToFile(DictEngRus& dictionary);
-	void creatFileDict(DictEngRus& dictionary);
+	bool openFile(std::fstream& in, bool addDict);
+	bool writeToFile(const DictEngRus& dictionary);
+	bool creatFileDict(DictEngRus& dictionary, bool addDict);
 	void readDictFromFile(std::fstream& in, DictEngRus& dictionary);
 
 	void mainMenu();
@@ -23,6 +23,10 @@ namespace elina {
 
 	void merge(DictEngRus& dictionary);
 	void equal(const DictEngRus& dictionary);
+	void clear(DictEngRus& dictionary);
+	void print(const DictEngRus& dictionary);
+	void save(const DictEngRus& dictionary);
+	void count(const DictEngRus& dictionary);
 
 	void insertWord(DictEngRus& dictionary);
 	void addTransl(DictEngRus& dictionary);

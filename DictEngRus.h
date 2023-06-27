@@ -1,18 +1,18 @@
 #ifndef DICTENGRUS_H
 #define DICTENGRUS_H
 
-#include "MyCompare.h"
-
 #include <map>
 #include <set>
 #include <string>
+
+#include "MyCompare.h"
 
 namespace elina {
 	using dictMap = std::map< std::string, std::set< std::string, dictComp >, dictComp >;
 	using dictPair = std::pair< std::string, std::set< std::string, dictComp > >;
 	using dictSet = std::set< std::string, dictComp >;
 	using dictMapIter = std::map< std::string, std::set< std::string, dictComp >, dictComp >::iterator;
-	using dictMapCIter= std::map< std::string, std::set< std::string, dictComp >, dictComp >::const_iterator;
+	using dictMapCIter = std::map< std::string, std::set< std::string, dictComp >, dictComp >::const_iterator;
 
 	class DictEngRus {
 
@@ -21,6 +21,8 @@ namespace elina {
 		~DictEngRus() = default;
 		DictEngRus(const DictEngRus& other) = default;
 		DictEngRus(DictEngRus&& other) noexcept = default;
+		DictEngRus& operator=(const DictEngRus& other) = default;
+		DictEngRus& operator=(DictEngRus&& other) noexcept = default;
 
 		dictMapIter begin();
 		dictMapIter end();
@@ -37,7 +39,7 @@ namespace elina {
 
 		bool searchWord(const std::string& word) const;
 
-		bool insertWord(const std::string& word, const dictSet transl = dictSet{});
+		bool insertWord(const std::string& word, const dictSet& transl = dictSet{});
 		bool insertTransl(const std::string& word, dictSet transl);
 		
 		bool deleteWord(const std::string& word);

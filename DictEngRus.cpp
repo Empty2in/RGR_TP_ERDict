@@ -1,11 +1,12 @@
-#include "DictEngRus.h"
-#include "StreamGuard.h"
-#include "AddOperators.h"
 #include <ostream>
 #include <algorithm>
 #include <iomanip>
 #include <functional>
 #include <memory>
+
+#include "DictEngRus.h"
+#include "StreamGuard.h"
+#include "AddOperators.h"
 
 namespace elina {
 
@@ -13,7 +14,7 @@ namespace elina {
 		if (!searchWord(word)) {
 			return nullptr;
 		}
-		return &(this->dict_.at(word));
+		return &(dict_.at(word));
 	}
 	dictSet DictEngRus::getTranslate(const std::string& word) const {
 		if (!searchWord(word)) {
@@ -32,41 +33,41 @@ namespace elina {
 	bool DictEngRus::searchWord(const std::string& word) const {
 		return (dict_.find(word) != dict_.end());
 	}
-	bool DictEngRus::insertWord(const std::string& word, const dictSet transl) {
+	bool DictEngRus::insertWord(const std::string& word, const dictSet& transl) {
 		auto newWord = dict_.insert( { word, transl } );
 		return newWord.second;
 	}
 	bool DictEngRus::insertTransl(const std::string& word, dictSet transl) {
-		if (!searchWord(word)) {
-			return false;
-		}
 		dictSet* oldTransl = getTranslSet(word);
-		(*oldTransl).merge(transl);
-		return true;
+		if (oldTransl && !transl.empty()) {
+			oldTransl->merge(transl);
+			return (*oldTransl != transl);
+		}
+		return false;
 	}
 	bool DictEngRus::deleteWord(const std::string& word) {
 		auto del = dict_.erase(word);
-		return static_cast<bool>(del);
+		return static_cast< bool >(del);
 	}
 	bool DictEngRus::deleteAllTransl(const std::string& word) {
-		if (searchWord(word)) {
-			dictSet* delTransl = getTranslSet(word);
-			(*delTransl).clear();
+		dictSet* delTransl = getTranslSet(word);
+		if (delTransl) {
+			delTransl->clear();
 			return true;
 		}
 		return false;
 	}
 	bool DictEngRus::deleteTranslate(const std::string& word, const std::string& delTrans) {
-		if (searchWord(word)) {
-			dictSet* transl = getTranslSet(word);
-			auto del = (*transl).erase(delTrans);
-			return static_cast<bool>(del);
+		dictSet* transl = getTranslSet(word);
+		if (!delTrans.empty() && transl) {
+			auto del = transl->erase(delTrans);
+			return static_cast< bool >(del);
 		}
 		return false;
 	}
 	bool DictEngRus::changeAllTransl(const std::string& word, const dictSet& transl) {
-		if (searchWord(word)) {
-			auto ans = dict_.insert_or_assign(word, transl);
+		if (!transl.empty() && searchWord(word)) {
+			dict_.insert_or_assign(word, transl);
 			return true;
 		}
 		return false;
@@ -79,17 +80,14 @@ namespace elina {
 		return dict_.empty();
 	}
 	void DictEngRus::swap(DictEngRus& other) noexcept {
-		std::swap(this->dict_, other.dict_);
+		std::swap(dict_, other.dict_);
 	}
 	bool DictEngRus::isEqual(const DictEngRus& other) const {
-		return (this->dict_ == other.dict_);
+		return (dict_ == other.dict_);
 	}
 	bool DictEngRus::merge(DictEngRus& other) {
-		if (isEqual(other)) {
-			return false;
-		}
-		this->dict_.merge(other.dict_);
-		return true;
+		dict_.merge(other.dict_);
+		return (!this->isEqual(other));
 	}
 
 	dictMapIter DictEngRus::begin(){
